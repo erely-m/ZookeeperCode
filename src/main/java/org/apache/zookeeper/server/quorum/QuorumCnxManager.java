@@ -276,7 +276,7 @@ public class QuorumCnxManager {
         }
         
         //If wins the challenge, then close the new connection.
-        if (sid < self.getId()) {
+        if (sid < self.getId()) { //如果SID小于自己SID 不创建连接 保证不会重复创建连接 只能由SID大的连接小的
             /*
              * This replica might still believe that the connection to sid is
              * up, so we have to shut down the workers before trying to open a
@@ -296,13 +296,13 @@ public class QuorumCnxManager {
 
             // Otherwise start worker threads to receive data.
         } else {
-            SendWorker sw = new SendWorker(sock, sid);
-            RecvWorker rw = new RecvWorker(sock, sid, sw);
+            SendWorker sw = new SendWorker(sock, sid); //创建对应的发送队列
+            RecvWorker rw = new RecvWorker(sock, sid, sw); //创建对应的接受队列
             sw.setRecv(rw);
 
             SendWorker vsw = senderWorkerMap.get(sid);
             
-            if(vsw != null)
+            if(vsw != null) //说明已经有了不再创建
                 vsw.finish();
             
             senderWorkerMap.put(sid, sw);
@@ -312,8 +312,8 @@ public class QuorumCnxManager {
                         SEND_CAPACITY));
             }
             
-            sw.start();
-            rw.start();
+            sw.start(); //启动队列
+            rw.start(); //启动队列
             
             return;
         }
@@ -536,7 +536,7 @@ public class QuorumCnxManager {
                             .toString());
                     ss.bind(addr);//选举端口绑定
                     while (!shutdown) {
-                        Socket client = ss.accept(); //监听其他节点的投票信息
+                        Socket client = ss.accept(); //监听其他节点的连接信息
                         setSockOpts(client);
                         LOG.info("Received connection request "
                                 + client.getRemoteSocketAddress());

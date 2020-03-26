@@ -35,15 +35,15 @@ public class ServerConfig {
     //// If you update the configuration parameters be sure
     //// to update the "conf" 4letter word
     ////
-    protected InetSocketAddress clientPortAddress;
-    protected String dataDir;
-    protected String dataLogDir;
-    protected int tickTime = ZooKeeperServer.DEFAULT_TICK_TIME;
-    protected int maxClientCnxns;
+    protected InetSocketAddress clientPortAddress; //端口地址
+    protected String dataDir; //数据目录
+    protected String dataLogDir; //日志目录
+    protected int tickTime = ZooKeeperServer.DEFAULT_TICK_TIME; //间隔时间
+    protected int maxClientCnxns; //最大客户端连接数
     /** defaults to -1 if not set explicitly */
-    protected int minSessionTimeout = -1;
+    protected int minSessionTimeout = -1; //最小session超时时间
     /** defaults to -1 if not set explicitly */
-    protected int maxSessionTimeout = -1;
+    protected int maxSessionTimeout = -1; //最大超时时间
 
     /**
      * Parse arguments for server configuration

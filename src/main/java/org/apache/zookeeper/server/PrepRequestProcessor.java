@@ -419,12 +419,12 @@ public class PrepRequestProcessor extends ZooKeeperCriticalThread implements
                 nodeRecord = getRecordForPath(path); //获取节点数据
                 checkACL(zks, nodeRecord.acl, ZooDefs.Perms.WRITE,
                         request.authInfo);
-                version = setDataRequest.getVersion();
-                int currentVersion = nodeRecord.stat.getVersion();
+                version = setDataRequest.getVersion(); //获取请求数据的version信息 CAS操作
+                int currentVersion = nodeRecord.stat.getVersion();//获取当前节点的version信息
                 if (version != -1 && version != currentVersion) {
                     throw new KeeperException.BadVersionException(path);
                 }
-                version = currentVersion + 1;
+                version = currentVersion + 1; //版本号加1
                 request.txn = new SetDataTxn(path, setDataRequest.getData(), version);
                 nodeRecord = nodeRecord.duplicate(request.hdr.getZxid());
                 nodeRecord.stat.setVersion(version);

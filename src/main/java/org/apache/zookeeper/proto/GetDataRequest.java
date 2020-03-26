@@ -20,9 +20,9 @@
 package org.apache.zookeeper.proto;
 
 import org.apache.jute.*;
-public class GetDataRequest implements Record {
-  private String path;
-  private boolean watch;
+public class GetDataRequest implements Record {//获取数据请求体
+  private String path; //节点路径
+  private boolean watch; //是否注册Watcher
   public GetDataRequest() {
   }
   public GetDataRequest(

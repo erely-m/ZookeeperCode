@@ -34,7 +34,7 @@ import org.apache.zookeeper.txn.TxnHeader;
  * RequestProcessors. There are various pieces of information that is tacked
  * onto the request as it is processed.
  */
-public class Request {
+public class Request {//«Î«ÛÃÂ
     private static final Logger LOG = LoggerFactory.getLogger(Request.class);
 
     public final static Request requestOfDeath = new Request(null, 0, 0, 0,

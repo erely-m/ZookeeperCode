@@ -158,7 +158,7 @@ public class ClientCnxn {
      */
     private boolean readOnly; //是否只读
 
-    final String chrootPath; //命名空间
+    final String chrootPath; //当前客户端命名空间
 
     final SendThread sendThread; //发送线程
 
@@ -437,9 +437,9 @@ public class ClientCnxn {
         return name + suffix;
     }
 
-    class EventThread extends ZooKeeperThread { //事件线程
+    class EventThread extends ZooKeeperThread { //事件线程 处理服务端的通知事件
         private final LinkedBlockingQueue<Object> waitingEvents =
-            new LinkedBlockingQueue<Object>(); //等待事件队列
+            new LinkedBlockingQueue<Object>(); //等待事件阻塞队列
 
         /** This is really the queued session state until the event
          * thread actually processes the event and hands it to the watcher.
@@ -491,7 +491,7 @@ public class ClientCnxn {
            try {
               isRunning = true;
               while (true) {
-                 Object event = waitingEvents.take(); //堵塞获取事件
+                 Object event = waitingEvents.take(); //堵塞获取事件 串行回调
                  if (event == eventOfDeath) { //判断事件类型
                     wasKilled = true; //设置需要被停止标志
                  } else {
@@ -634,7 +634,7 @@ public class ClientCnxn {
     }
 
     private void finishPacket(Packet p) {
-        if (p.watchRegistration != null) {
+        if (p.watchRegistration != null) { //注册响应事件
             p.watchRegistration.register(p.replyHeader.getErr());
         }
 
@@ -782,7 +782,7 @@ public class ClientCnxn {
                             + Long.toHexString(sessionId));
                 }
 
-                eventThread.queueEvent( we ); //加入响应时间线程
+                eventThread.queueEvent( we ); //加入响应事件线程
                 return;
             }
 
@@ -1393,7 +1393,7 @@ public class ClientCnxn {
             throws InterruptedException {
         ReplyHeader r = new ReplyHeader();//生成回复头
         Packet packet = queuePacket(h, r, request, response, null, null, null,
-                    null, watchRegistration); //生成数据包
+                    null, watchRegistration); //生成数据包 并放入发送队列中
         synchronized (packet) { //
             while (!packet.finished) { //如果包没有处理完成则等待
                 packet.wait();
@@ -1446,10 +1446,10 @@ public class ClientCnxn {
                 if (h.getType() == OpCode.closeSession) {
                     closing = true;
                 }
-                outgoingQueue.add(packet); //添加消息至队列
+                outgoingQueue.add(packet); //添加消息至发送队列
             }
         }
-        sendThread.getClientCnxnSocket().wakeupCnxn();
+        sendThread.getClientCnxnSocket().wakeupCnxn(); //唤醒selector轮训
         return packet;
     }
 

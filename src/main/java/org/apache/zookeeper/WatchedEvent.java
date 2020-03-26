@@ -28,7 +28,7 @@ import org.apache.zookeeper.Watcher.Event.KeeperState;
  *  was involved in the event.
  */
 public class WatchedEvent {
-    final private KeeperState keeperState; //保持的状态
+    final private KeeperState keeperState; //通知的状态
     final private EventType eventType;	//时间类型
     private String path;	//节点path
     
@@ -71,7 +71,7 @@ public class WatchedEvent {
     /**
      *  Convert WatchedEvent to type that can be sent over network
      */
-    public WatcherEvent getWrapper() { //装饰者模式
+    public WatcherEvent getWrapper() { //装饰者模式包装成可序列化的WatcherEvent
         return new WatcherEvent(eventType.getIntValue(), 
                                 keeperState.getIntValue(), 
                                 path);

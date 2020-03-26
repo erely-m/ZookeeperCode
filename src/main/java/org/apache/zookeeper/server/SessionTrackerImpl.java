@@ -89,7 +89,7 @@ public class SessionTrackerImpl extends ZooKeeperCriticalThread implements Sessi
 
     SessionExpirer expirer; //session过期发送关闭请求
 
-    private long roundToInterval(long time) {
+    private long roundToInterval(long time) {//分桶策略确定检查值
         // We give a one interval grace period
         return (time / expirationInterval + 1) * expirationInterval;
     }
@@ -99,7 +99,7 @@ public class SessionTrackerImpl extends ZooKeeperCriticalThread implements Sessi
             long sid, ZooKeeperServerListener listener)
     {
         super("SessionTracker", listener);
-        this.expirer = expirer;
+        this.expirer = expirer; //过期时间间隔
         this.expirationInterval = tickTime;
         this.sessionsWithTimeout = sessionsWithTimeout;
         nextExpirationTime = roundToInterval(System.currentTimeMillis());
@@ -260,7 +260,7 @@ public class SessionTrackerImpl extends ZooKeeperCriticalThread implements Sessi
         }
         touchSession(id, sessionTimeout);
     }
-
+    //Session检查
     synchronized public void checkSession(long sessionId, Object owner) throws KeeperException.SessionExpiredException, KeeperException.SessionMovedException {
         SessionImpl session = sessionsById.get(sessionId);
         if (session == null || session.isClosing()) {

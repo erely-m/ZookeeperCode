@@ -20,9 +20,9 @@
 package org.apache.zookeeper.proto;
 
 import org.apache.jute.*;
-public class GetDataResponse implements Record {
-  private byte[] data;
-  private org.apache.zookeeper.data.Stat stat;
+public class GetDataResponse implements Record {//响应体
+  private byte[] data; //数据
+  private org.apache.zookeeper.data.Stat stat; //状态
   public GetDataResponse() {
   }
   public GetDataResponse(

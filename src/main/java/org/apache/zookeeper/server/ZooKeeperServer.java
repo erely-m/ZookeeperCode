@@ -277,7 +277,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
             setZxid(zkDb.getDataTreeLastProcessedZxid());//设置当前server的zxid
         }
         else {
-            setZxid(zkDb.loadDataBase());//设置当前server的zxid
+            setZxid(zkDb.loadDataBase());//设置当前载入server的zxid
         }
         
         // Clean up dead sessions
@@ -410,10 +410,10 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
     
     public synchronized void startup() {
         if (sessionTracker == null) {
-            createSessionTracker();
+            createSessionTracker(); //创建会话管理
         }
         startSessionTracker(); //Session管理
-        setupRequestProcessors(); //请求处理程序
+        setupRequestProcessors(); //初始化请求链
 
         registerJMX();
 
@@ -421,6 +421,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
         notifyAll();
     }
 
+    //PrepRequestProcessor-->SyncRequestProcessor-->FinalRequestProcessor
     protected void setupRequestProcessors() {
         RequestProcessor finalProcessor = new FinalRequestProcessor(this);
         RequestProcessor syncProcessor = new SyncRequestProcessor(this,
@@ -450,7 +451,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
 
     protected void createSessionTracker() {
         sessionTracker = new SessionTrackerImpl(this, zkDb.getSessionWithTimeOuts(),
-                tickTime, 1, getZooKeeperServerListener());
+                tickTime, 1, getZooKeeperServerListener()); //创建会话管理里器
     }
     
     protected void startSessionTracker() {

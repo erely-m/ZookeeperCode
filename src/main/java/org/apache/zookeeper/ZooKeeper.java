@@ -443,7 +443,7 @@ public class ZooKeeper {
         ConnectStringParser connectStringParser = new ConnectStringParser(
                 connectString); //连接解析器包含连接地址命名空间
         HostProvider hostProvider = new StaticHostProvider(
-                connectStringParser.getServerAddresses()); //构造ZK服务器地址列表管理器HostProvider
+                connectStringParser.getServerAddresses()); //构造ZK服务器地址列表管理器HostProvider 可以自己构造自定义的HostProvider
         cnxn = new ClientCnxn(connectStringParser.getChrootPath(),
                 hostProvider, sessionTimeout, this, watchManager,
                 getClientCnxnSocket(), canBeReadOnly); //创建负责通讯的clientcnxn

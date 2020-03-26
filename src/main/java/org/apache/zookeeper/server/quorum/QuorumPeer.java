@@ -182,7 +182,7 @@ public class QuorumPeer extends ZooKeeperThread implements QuorumStats.Provider 
         public LearnerType type = LearnerType.PARTICIPANT; //类型 节点是否能进行投票
     }
 
-    public enum ServerState {
+    public enum ServerState { //服务器状态 寻找、跟随、领导、观察
         LOOKING, FOLLOWING, LEADING, OBSERVING;
     }
     
@@ -497,7 +497,7 @@ public class QuorumPeer extends ZooKeeperThread implements QuorumStats.Provider 
     
     @Override
     public synchronized void start() {
-        loadDataBase(); //载入数据
+        loadDataBase(); //载入本地数据
         cnxnFactory.start(); //启动监听端口
         startLeaderElection(); //开始选举
         super.start();//启动QuorumPeer线程，在该线程中进行服务器状态的检查（根据角色不同操作不同）
@@ -582,7 +582,7 @@ public class QuorumPeer extends ZooKeeperThread implements QuorumStats.Provider 
         if (myQuorumAddr == null) { //如果节点地址为空 异常
             throw new RuntimeException("My id " + myid + " not in the peer list");
         }
-        if (electionType == 0) { //不会进入
+        if (electionType == 0) { //不会进入使用的是3
             try {
                 udpSocket = new DatagramSocket(myQuorumAddr.getPort());
                 responder = new ResponderThread();
@@ -689,7 +689,7 @@ public class QuorumPeer extends ZooKeeperThread implements QuorumStats.Provider 
             qcm = new QuorumCnxManager(this);
             QuorumCnxManager.Listener listener = qcm.listener;
             if(listener != null){
-                listener.start(); //启动内部选举端口监听
+                listener.start(); //启动内部选举端口监听 3888
                 le = new FastLeaderElection(this, qcm);
             } else {
                 LOG.error("Null listener when initializing cnx manager");
@@ -806,7 +806,7 @@ public class QuorumPeer extends ZooKeeperThread implements QuorumStats.Provider 
                         try {
                             roZkMgr.start();
                             setBCVote(null);
-                            setCurrentVote(makeLEStrategy().lookForLeader());
+                            setCurrentVote(makeLEStrategy().lookForLeader()); //开始发送自己的投票
                         } catch (Exception e) {
                             LOG.warn("Unexpected exception",e);
                             setPeerState(ServerState.LOOKING);

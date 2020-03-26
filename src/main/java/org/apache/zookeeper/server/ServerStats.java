@@ -28,7 +28,7 @@ public class ServerStats {
     private long maxLatency; //最长延迟
     private long minLatency = Long.MAX_VALUE; //最短延迟
     private long totalLatency = 0; //总延迟
-    private long count = 0; //延迟次数
+    private long count = 0; //请求次数
 
     private final Provider provider; //Provider对象，提供部分统计数据
 

@@ -90,11 +90,11 @@ public class Vote {
     
     final private long id; //id（myid）
     
-    final private long zxid; //zxid
+    final private long zxid; //zxid事务ID
     
-    final private long electionEpoch; //选举时代
+    final private long electionEpoch; //逻辑时钟判断是否在一个选举周期内
     
-    final private long peerEpoch; //集群时代
+    final private long peerEpoch; //被选举Leader的Epoch
     
     public int getVersion() {
         return version;
@@ -120,7 +120,7 @@ public class Vote {
         return state;
     }
 
-    final private ServerState state; //状态 本节点角色
+    final private ServerState state; //状态 当前服务器状态
     
     @Override
     public boolean equals(Object o) {

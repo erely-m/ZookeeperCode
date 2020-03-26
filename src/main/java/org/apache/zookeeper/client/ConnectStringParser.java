@@ -36,7 +36,7 @@ import org.apache.zookeeper.common.PathUtils;
 public final class ConnectStringParser { //连接内容解析器
     private static final int DEFAULT_PORT = 2181; //默认端口
 
-    private final String chrootPath; //命名空间
+    private final String chrootPath; //命名空间限制客户端操作的节点
 
     private final ArrayList<InetSocketAddress> serverAddresses = new ArrayList<InetSocketAddress>(); //服务器地址
 

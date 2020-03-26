@@ -21,8 +21,8 @@ package org.apache.zookeeper.proto;
 
 import org.apache.jute.*;
 public class RequestHeader implements Record {
-  private int xid;
-  private int type;
+  private int xid;//记录客户端发起请求的顺序
+  private int type; //记录请求的操作
   public RequestHeader() {
   }
   public RequestHeader(

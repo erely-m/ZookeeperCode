@@ -20,8 +20,8 @@
 package org.apache.zookeeper.proto;
 
 import org.apache.jute.*;
-public class ReplyHeader implements Record {
-  private int xid; //
+public class ReplyHeader implements Record { //响应头
+  private int xid; // 客户端发起请求的序号
   private long zxid; //zxid
   private int err; //返回错误信息
   public ReplyHeader() {
