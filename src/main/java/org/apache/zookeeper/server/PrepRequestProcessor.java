@@ -455,13 +455,13 @@ public class PrepRequestProcessor extends ZooKeeperCriticalThread implements
                 nodeRecord.stat.setAversion(version);
                 addChangeRecord(nodeRecord);
                 break;
-            case OpCode.createSession:
+            case OpCode.createSession: //创建
                 request.request.rewind();
                 int to = request.request.getInt();
                 request.txn = new CreateSessionTxn(to);
                 request.request.rewind();
-                zks.sessionTracker.addSession(request.sessionId, to);
-                zks.setOwner(request.sessionId, request.getOwner());
+                zks.sessionTracker.addSession(request.sessionId, to); //添加session到sessionTracker中
+                zks.setOwner(request.sessionId, request.getOwner()); //设置session所属者
                 break;
             case OpCode.closeSession:
                 // We don't want to do this check since the session expiration thread

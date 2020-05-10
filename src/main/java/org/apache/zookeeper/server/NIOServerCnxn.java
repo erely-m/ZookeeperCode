@@ -55,7 +55,7 @@ import org.apache.zookeeper.server.util.OSMXBean;
  * This class handles communication with clients using NIO. There is one per
  * client, but only one thread doing the communication.
  */
-public class NIOServerCnxn extends ServerCnxn {
+public class NIOServerCnxn extends ServerCnxn { //会话上下文类
     static final Logger LOG = LoggerFactory.getLogger(NIOServerCnxn.class);
 
     NIOServerCnxnFactory factory; //NIO实现
@@ -415,7 +415,7 @@ public class NIOServerCnxn extends ServerCnxn {
         if (zkServer == null) {
             throw new IOException("ZooKeeperServer not running");
         }
-        zkServer.processConnectRequest(this, incomingBuffer);
+        zkServer.processConnectRequest(this, incomingBuffer); //处理请求
         initialized = true; //初始化完成
     }
 

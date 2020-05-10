@@ -568,11 +568,11 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
 
     long createSession(ServerCnxn cnxn, byte passwd[], int timeout) {
         long sessionId = sessionTracker.createSession(timeout);
-        Random r = new Random(sessionId ^ superSecret);
+        Random r = new Random(sessionId ^ superSecret); //创建密码
         r.nextBytes(passwd);
         ByteBuffer to = ByteBuffer.allocate(4);
         to.putInt(timeout);
-        cnxn.setSessionId(sessionId);
+        cnxn.setSessionId(sessionId); //设置sessionID
         submitRequest(cnxn, sessionId, OpCode.createSession, 0, to, null); //提交创建session请求
         return sessionId;
     }
@@ -697,7 +697,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
             }
         }
         try {
-            touch(si.cnxn); //校验sessionId
+            touch(si.cnxn); // 会话激活
             boolean validpacket = Request.isValid(si.type);
             if (validpacket) {
                 firstProcessor.processRequest(si); // 调用第一个处理器处理请求
@@ -863,7 +863,7 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
             LOG.info(msg);
             throw new CloseRequestException(msg);
         }
-        if (connReq.getLastZxidSeen() > zkDb.dataTree.lastProcessedZxid) { //如果请求的zxid大于zk数据库里面最后的zxid拒绝 为什么？ TODO
+        if (connReq.getLastZxidSeen() > zkDb.dataTree.lastProcessedZxid) { //如果请求的zxid大于zk数据库里面最后的zxid拒绝 为什么？ 客户端的zxid肯定会小于服务端的
             String msg = "Refusing session request for client "
                 + cnxn.getRemoteSocketAddress()
                 + " as it has seen zxid 0x"
@@ -890,14 +890,14 @@ public class ZooKeeperServer implements SessionExpirer, ServerStats.Provider {
         // session is setup
         cnxn.disableRecv(); //不接受其他数据包？？？
         long sessionId = connReq.getSessionId(); //获取sessionID
-        if (sessionId != 0) { //连接请求的sessionId默认值为0 如果不是0 说明是重新连接？
+        if (sessionId != 0) { //连接请求的sessionId不为空说明之前已经连接过了 这里代表重新连接
             long clientSessionId = connReq.getSessionId();
             LOG.info("Client attempting to renew session 0x"
                     + Long.toHexString(clientSessionId)
                     + " at " + cnxn.getRemoteSocketAddress());
             serverCnxnFactory.closeSession(sessionId);
             cnxn.setSessionId(sessionId);
-            reopenSession(cnxn, sessionId, passwd, sessionTimeout); //重新连接？？
+            reopenSession(cnxn, sessionId, passwd, sessionTimeout); //进行重新连接
         } else {
             LOG.info("Client attempting to establish new session at "
                     + cnxn.getRemoteSocketAddress());

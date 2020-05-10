@@ -51,7 +51,7 @@ public class Util {
     private static final String SNAP_DIR="snapDir";
     private static final String LOG_DIR="logDir";
     private static final String DB_FORMAT_CONV="dbFormatConversion";
-    private static final ByteBuffer fill = ByteBuffer.allocateDirect(1);
+    private static final ByteBuffer fill = ByteBuffer.allocateDirect(1); //开辟堆外空间？ TODO 为什么开辟呢 因为这个一直需要使用，而使用堆外空间吗？
     
     public static String makeURIString(String dataDir, String dataLogDir, 
             String convPolicy){

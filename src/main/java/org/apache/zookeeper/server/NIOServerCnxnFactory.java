@@ -154,7 +154,7 @@ public class NIOServerCnxnFactory extends ServerCnxnFactory implements Runnable 
 
     protected NIOServerCnxn createConnection(SocketChannel sock,
             SelectionKey sk) throws IOException {
-        return new NIOServerCnxn(zkServer, sock, sk, this);
+        return new NIOServerCnxn(zkServer, sock, sk, this); //会话上下文创建
     }
 
     private int getClientCnxnCount(InetAddress cl) {
@@ -180,12 +180,12 @@ public class NIOServerCnxnFactory extends ServerCnxnFactory implements Runnable 
                         selected);
                 Collections.shuffle(selectedList);
                 for (SelectionKey k : selectedList) {
-                    if ((k.readyOps() & SelectionKey.OP_ACCEPT) != 0) {
+                    if ((k.readyOps() & SelectionKey.OP_ACCEPT) != 0) { //监听请求
                         SocketChannel sc = ((ServerSocketChannel) k
                                 .channel()).accept();
                         InetAddress ia = sc.socket().getInetAddress();
                         int cnxncount = getClientCnxnCount(ia);
-                        if (maxClientCnxns > 0 && cnxncount >= maxClientCnxns){
+                        if (maxClientCnxns > 0 && cnxncount >= maxClientCnxns){ //判断连接数是够过大
                             LOG.warn("Too many connections from " + ia
                                      + " - max is " + maxClientCnxns );
                             sc.close();
@@ -195,12 +195,12 @@ public class NIOServerCnxnFactory extends ServerCnxnFactory implements Runnable 
                             sc.configureBlocking(false);
                             SelectionKey sk = sc.register(selector,
                                     SelectionKey.OP_READ);
-                            NIOServerCnxn cnxn = createConnection(sc, sk);
+                            NIOServerCnxn cnxn = createConnection(sc, sk); //创建连接上下文 每一个（会话）都有自己的上下文
                             sk.attach(cnxn); //附加对象 在后面进行交互的时候可以将该对象取出来并操作
-                            addCnxn(cnxn);
+                            addCnxn(cnxn); //添加会话上下文到容器
                         }
-                    } else if ((k.readyOps() & (SelectionKey.OP_READ | SelectionKey.OP_WRITE)) != 0) {
-                        NIOServerCnxn c = (NIOServerCnxn) k.attachment();
+                    } else if ((k.readyOps() & (SelectionKey.OP_READ | SelectionKey.OP_WRITE)) != 0) { //处理请求
+                        NIOServerCnxn c = (NIOServerCnxn) k.attachment(); //获取上下文
                         c.doIO(k);
                     } else {
                         if (LOG.isDebugEnabled()) {
