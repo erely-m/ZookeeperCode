@@ -125,10 +125,10 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
                 Request si = null;
                 if (toFlush.isEmpty()) { //刷新到磁盘的队列为空 toFlush存在的意义是如果一次有多个事务进行一次性提交
                     si = queuedRequests.take(); //堵塞获取
-                } else {
+                } else { //如果为空则说明本次只有一个事务需要尽快提交并写入内存
                     si = queuedRequests.poll();
                     if (si == null) {
-                        flush(toFlush);
+                        flush(toFlush); //将数据持久化到磁盘并执行下一个流程
                         continue;
                     }
                 }
@@ -193,8 +193,8 @@ public class SyncRequestProcessor extends ZooKeeperCriticalThread implements Req
         if (toFlush.isEmpty())
             return;
 
-        zks.getZKDatabase().commit();
-        while (!toFlush.isEmpty()) {
+        zks.getZKDatabase().commit(); //提交 刷盘
+        while (!toFlush.isEmpty()) { //如果队列有数据处理并交给下一个处理器处理
             Request i = toFlush.remove();
             if (nextProcessor != null) {
                 nextProcessor.processRequest(i);

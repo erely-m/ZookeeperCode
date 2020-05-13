@@ -130,7 +130,7 @@ public class NIOServerCnxnFactory extends ServerCnxnFactory implements Runnable 
         return ss.socket().getLocalPort();
     }
 
-    private void addCnxn(NIOServerCnxn cnxn) {
+    private void addCnxn(NIOServerCnxn cnxn) { //添加上下文记录正放入Map中  其中InetAddress对象重写了hashCode方法返回的是实际IP地址
         synchronized (cnxns) {
             cnxns.add(cnxn);
             synchronized (ipMap){

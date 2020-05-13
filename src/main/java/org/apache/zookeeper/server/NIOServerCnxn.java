@@ -108,7 +108,7 @@ public class NIOServerCnxn extends ServerCnxn { //会话上下文类
         sock.socket().setSoLinger(false, -1);
         InetAddress addr = ((InetSocketAddress) sock.socket()
                 .getRemoteSocketAddress()).getAddress();
-        authInfo.add(new Id("ip", addr.getHostAddress()));
+        authInfo.add(new Id("ip", addr.getHostAddress())); //添加认证信息 统计使用吗？
         sk.interestOps(SelectionKey.OP_READ);//初始对read状态有兴趣
     }
 
